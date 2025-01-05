@@ -22,5 +22,5 @@ It offers detailed timesheets, with task name, invoice date, due date, the payme
         'report/timesheet_analysis_report_view.xml',
     ],
     'images': ['static/description/icon.png'],
-    'license': 'Other OSI Approved Licence'
+    'license': 'Other OSI approved licence'
 }
