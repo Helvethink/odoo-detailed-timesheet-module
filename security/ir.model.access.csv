@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_timesheets_analysis_reporting,timesheets_analysis_reporting,model_timesheets_analysis_reporting,,1,1,1,1

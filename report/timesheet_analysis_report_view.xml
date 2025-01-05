@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="timesheets_analysis_reporting_list" model="ir.ui.view">
+            <field name="name">timesheets.analysis.reporting.list</field>
+            <field name="model">timesheets.analysis.reporting</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="date"/>
+                    <field name="employee_id"/>
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="task_name"/>
+                    <field name="invoice_due_date"/>
+                    <field name="invoice_date"/>
+                    <field name="pay_ref"/>
+                    <field name="pay_state"/>
+                    <field name="currency_id" column_invisible="1"/>
+                    <field name="amount" string="Timesheet Costs" optional="hide" sum="Total"/>
+                    <field name="unit_amount" optional="show" widget="timesheet_uom" sum="Total"
+                        decoration-danger="unit_amount &gt; 24 or unit_amount &lt; 0"
+                        decoration-muted="unit_amount == 0"
+                    />
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>
