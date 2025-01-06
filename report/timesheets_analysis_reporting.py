@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models
 from odoo.tools.sql import drop_view_if_exists, SQL
+from odoo.addons.sale_timesheet.models.hr_timesheet import TIMESHEET_INVOICE_TYPES
 
 
 class TimesheetsAnalysisReporting(models.Model):
