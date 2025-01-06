@@ -80,7 +80,6 @@ class TimesheetsAnalysisReporting(models.Model):
                 C.payment_state as pay_state,
                 C.invoice_date as invoice_date,
                 C.invoice_date_due as invoice_due_date,
-                C.amount_untaxed as timesheet_revenues,
                 A.order_id AS order_id,
                 A.so_line AS so_line,
                 A.timesheet_invoice_type AS timesheet_invoice_type,
