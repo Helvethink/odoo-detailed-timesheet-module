@@ -33,6 +33,7 @@ class TimesheetsAnalysisReporting(models.Model):
     pay_state = fields.Char("Payment Status", readonly=True)
     invoice_date = fields.Date("Invoice Date", readonly=True)
     invoice_due_date = fields.Date("Due date", readonly=True)
+    timesheet_revenues = fields.Monetary("Timesheet Revenues", currency_field="currency_id", readonly=True, help="Number of hours spent multiplied by the unit price per hour/day.")
 
     @api.depends('project_id.message_partner_ids', 'task_id.message_partner_ids')
     def _compute_message_partner_ids(self):
@@ -69,7 +70,8 @@ class TimesheetsAnalysisReporting(models.Model):
                 C.payment_reference as pay_ref,
                 C.payment_state as pay_state,
                 C.invoice_date as invoice_date,
-                C.invoice_date_due as invoice_due_date
+                C.invoice_date_due as invoice_due_date,
+                C.amount_untaxed as timesheet_revenues
         """
 
     @api.model
