@@ -33,7 +33,15 @@ class TimesheetsAnalysisReporting(models.Model):
     pay_state = fields.Char("Payment Status", readonly=True)
     invoice_date = fields.Date("Invoice Date", readonly=True)
     invoice_due_date = fields.Date("Due date", readonly=True)
+    order_id = fields.Many2one("sale.order", string="Sales Order", readonly=True)
+    so_line = fields.Many2one("sale.order.line", string="Sales Order Item", readonly=True)
+    timesheet_invoice_type = fields.Selection(TIMESHEET_INVOICE_TYPES, string="Billable Type", readonly=True)
+    timesheet_invoice_id = fields.Many2one("account.move", string="Invoice", readonly=True, help="Invoice created from the timesheet")
     timesheet_revenues = fields.Monetary("Timesheet Revenues", currency_field="currency_id", readonly=True, help="Number of hours spent multiplied by the unit price per hour/day.")
+    margin = fields.Monetary("Margin", currency_field="currency_id", readonly=True, help="Timesheets revenues minus the costs")
+    billable_time = fields.Float("Billable Time", readonly=True, help="Number of hours/days linked to a SOL.")
+    non_billable_time = fields.Float("Non-billable Time", readonly=True, help="Number of hours/days not linked to a SOL.")
+
 
     @api.depends('project_id.message_partner_ids', 'task_id.message_partner_ids')
     def _compute_message_partner_ids(self):
@@ -71,12 +79,33 @@ class TimesheetsAnalysisReporting(models.Model):
                 C.payment_state as pay_state,
                 C.invoice_date as invoice_date,
                 C.invoice_date_due as invoice_due_date,
-                C.amount_untaxed as timesheet_revenues
+                C.amount_untaxed as timesheet_revenues,
+                A.order_id AS order_id,
+                A.so_line AS so_line,
+                A.timesheet_invoice_type AS timesheet_invoice_type,
+                A.timesheet_invoice_id AS timesheet_invoice_id,
+                CASE
+                    WHEN A.order_id IS NULL OR T.service_type in ('manual', 'milestones')
+                    THEN 0
+                    WHEN T.invoice_policy = 'order' AND SOL.qty_delivered != 0
+                    THEN (SOL.price_subtotal / SOL.qty_delivered) * (A.unit_amount * sol_product_uom.factor / a_product_uom.factor)
+                    ELSE A.unit_amount * SOL.price_unit * sol_product_uom.factor / a_product_uom.factor
+                END AS timesheet_revenues,
+                CASE WHEN A.order_id IS NULL THEN 0 ELSE A.unit_amount END AS billable_time
         """
 
     @api.model
     def _from(self):
-        return "FROM account_analytic_line A left join project_task B on A.task_id=B.id left join account_move C on C.id=A.timesheet_invoice_id"
+        return """
+            FROM account_analytic_line A 
+            LEFT JOIN project_task B on A.task_id=B.id 
+            LEFT JOIN account_move C on C.id=A.timesheet_invoice_id
+            LEFT JOIN sale_order_line SOL ON A.so_line = SOL.id
+            LEFT JOIN uom_uom sol_product_uom ON sol_product_uom.id = SOL.product_uom
+            INNER JOIN uom_uom a_product_uom ON a_product_uom.id = A.product_uom_id
+            LEFT JOIN product_product P ON P.id = SOL.product_id
+            LEFT JOIN product_template T ON T.id = P.product_tmpl_id
+        """
 
     @api.model
     def _where(self):
