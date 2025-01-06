@@ -15,6 +15,7 @@
                     <field name="invoice_date"/>
                     <field name="pay_ref"/>
                     <field name="pay_state"/>
+                    <field name="timesheet_revenues"/>
                     <field name="currency_id" column_invisible="1"/>
                     <field name="amount" string="Timesheet Costs" optional="hide" sum="Total"/>
                     <field name="unit_amount" optional="show" widget="timesheet_uom" sum="Total"
