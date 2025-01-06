@@ -39,9 +39,7 @@ class TimesheetsAnalysisReporting(models.Model):
     timesheet_invoice_type = fields.Selection(TIMESHEET_INVOICE_TYPES, string="Billable Type", readonly=True)
     timesheet_invoice_id = fields.Many2one("account.move", string="Invoice", readonly=True, help="Invoice created from the timesheet")
     timesheet_revenues = fields.Monetary("Timesheet Revenues", currency_field="currency_id", readonly=True, help="Number of hours spent multiplied by the unit price per hour/day.")
-    margin = fields.Monetary("Margin", currency_field="currency_id", readonly=True, help="Timesheets revenues minus the costs")
     billable_time = fields.Float("Billable Time", readonly=True, help="Number of hours/days linked to a SOL.")
-    non_billable_time = fields.Float("Non-billable Time", readonly=True, help="Number of hours/days not linked to a SOL.")
 
 
     @api.depends('project_id.message_partner_ids', 'task_id.message_partner_ids')
